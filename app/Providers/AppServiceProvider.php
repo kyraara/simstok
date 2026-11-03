@@ -2,8 +2,7 @@
 
 namespace App\Providers;
 
-use App\Enums\ApprovalStatus;
-use App\Enums\OpnameStatus;
+use App\Http\Controllers\NotificationController;
 use App\Models\Adjustment;
 use App\Models\CylinderType;
 use App\Models\Distribution;
@@ -46,17 +45,11 @@ class AppServiceProvider extends ServiceProvider
         // Jenis tabung baru otomatis punya saldo isi/kosong/rusak = 0.
         CylinderType::created(fn (CylinderType $type) => app(StockService::class)->ensureStockRows($type));
 
-        // Jumlah dokumen yang menunggu persetujuan untuk lonceng di top bar.
+        // Data awal lonceng notifikasi di top bar (selanjutnya diperbarui berkala lewat fetch).
         View::composer('components.layouts.app', function ($view) {
-            $user = auth()->user();
-            $count = 0;
-            if ($user?->can('adjustments.approve')) {
-                $count += Adjustment::where('status', ApprovalStatus::Pending)->count();
+            if ($user = auth()->user()) {
+                $view->with('notificationFeed', NotificationController::feed($user));
             }
-            if ($user?->can('opname.approve')) {
-                $count += StockOpname::where('status', OpnameStatus::Submitted)->count();
-            }
-            $view->with('pendingApprovals', $count);
         });
 
         // Format angka Indonesia: 1.240

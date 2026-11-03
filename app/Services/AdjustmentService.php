@@ -20,6 +20,7 @@ class AdjustmentService
     public function __construct(
         private StockService $stock,
         private DocumentNumberService $numbers,
+        private NotificationService $notifications,
     ) {}
 
     /**
@@ -74,6 +75,8 @@ class AdjustmentService
 
             $adjustment->items()->createMany($items);
 
+            $this->notifications->adjustmentSubmitted($adjustment);
+
             return $adjustment;
         });
     }
@@ -91,6 +94,8 @@ class AdjustmentService
                 'approved_at' => now(),
                 'review_note' => $note,
             ]);
+
+            $this->notifications->adjustmentReviewed($adjustment, approved: true);
         });
     }
 
@@ -104,6 +109,8 @@ class AdjustmentService
             'approved_at' => now(),
             'review_note' => $note,
         ]);
+
+        $this->notifications->adjustmentReviewed($adjustment, approved: false);
     }
 
     public function cancel(Adjustment $adjustment): void
@@ -111,6 +118,8 @@ class AdjustmentService
         $this->ensurePending($adjustment);
 
         $adjustment->update(['status' => ApprovalStatus::Cancelled]);
+
+        $this->notifications->resolveTask(route('adjustments.show', $adjustment));
     }
 
     /** Terapkan item penyesuaian ke stok: from_condition berkurang, to_condition bertambah. */

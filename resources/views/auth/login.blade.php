@@ -3,7 +3,7 @@
         {{-- Panel identitas --}}
         <div class="relative hidden overflow-hidden bg-ink p-12 text-white lg:flex lg:flex-col">
             <div class="flex items-center gap-3">
-                <div class="flex size-10 items-center justify-center rounded-lg bg-gas"><x-icon name="cylinder" class="size-6" /></div>
+                <x-logo class="size-12" />
                 <div>
                     <div class="text-lg font-bold tracking-tight">SIMSTOK-LPG</div>
                     <div class="text-xs text-white/50">PT Kalindo Goa Utama Gas</div>
@@ -37,7 +37,7 @@
         <div class="flex items-center justify-center px-5 py-12">
             <div class="w-full max-w-sm">
                 <div class="mb-8 flex items-center gap-3 lg:hidden">
-                    <div class="flex size-10 items-center justify-center rounded-lg bg-gas text-white"><x-icon name="cylinder" class="size-6" /></div>
+                    <x-logo class="size-12 ring-1 ring-line" />
                     <div>
                         <div class="text-lg font-bold tracking-tight">SIMSTOK-LPG</div>
                         <div class="text-xs text-muted">PT Kalindo Goa Utama Gas</div>

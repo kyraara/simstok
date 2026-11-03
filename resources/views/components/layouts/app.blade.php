@@ -27,7 +27,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="theme-color" content="#14213d">
     <title>{{ $title ? $title.' · ' : '' }}{{ config('app.name') }}</title>
-    <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+    <link rel="icon" href="{{ asset('logo.png') }}" type="image/png">
     @fonts
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -40,9 +40,7 @@
     <aside class="fixed inset-y-0 left-0 z-50 flex w-64 -translate-x-full flex-col bg-ink text-white transition-transform duration-200 lg:translate-x-0"
         :class="nav && 'translate-x-0'">
         <div class="flex h-16 shrink-0 items-center gap-3 px-5">
-            <div class="flex size-9 items-center justify-center rounded-lg bg-gas">
-                <x-icon name="cylinder" class="size-5 text-white" />
-            </div>
+            <x-logo class="size-10" />
             <div class="leading-tight">
                 <div class="font-bold tracking-tight">SIMSTOK-LPG</div>
                 <div class="text-[11px] text-white/50">PT Kalindo Goa Utama Gas</div>
@@ -107,12 +105,7 @@
             <div class="truncate text-sm font-semibold text-muted">{{ $title }}</div>
 
             <div class="ml-auto flex items-center gap-1">
-                @if (($pendingApprovals ?? 0) > 0)
-                    <a href="{{ route('dashboard') }}#persetujuan" class="relative rounded-lg p-2 text-muted hover:bg-white hover:text-ink" title="{{ $pendingApprovals }} menunggu persetujuan">
-                        <x-icon name="bell" />
-                        <span class="absolute top-1 right-1 flex min-w-4 items-center justify-center rounded-full bg-flame px-1 text-[10px] leading-4 font-bold text-white">{{ $pendingApprovals }}</span>
-                    </a>
-                @endif
+                @include('notifications.bell')
 
                 <div x-data="{ open: false }" class="relative" @click.outside="open = false">
                     <button type="button" @click="open = !open" class="flex items-center gap-2 rounded-lg py-1.5 pr-2 pl-1.5 text-sm font-semibold hover:bg-white">

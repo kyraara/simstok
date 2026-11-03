@@ -42,7 +42,7 @@ class PagesTest extends TestCase
     public static function adminPages(): array
     {
         return array_map(fn ($u) => [$u], [
-            '/dashboard', '/profile',
+            '/dashboard', '/profile', '/notifications',
             '/receipts', '/receipts/create', '/receipts/{receipt}',
             '/distributions', '/distributions/create', '/distributions/{distribution}', '/distributions/quota?outlet_id={outlet}',
             '/adjustments', '/adjustments/create', '/adjustments/{adjustment}',

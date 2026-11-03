@@ -6,6 +6,7 @@ use App\Http\Controllers\Master\CylinderTypeController;
 use App\Http\Controllers\Master\OutletController;
 use App\Http\Controllers\Master\SupplierController;
 use App\Http\Controllers\Master\VehicleController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StockCardController;
@@ -26,6 +27,10 @@ Route::middleware(['auth', 'active'])->group(function () {
 
     Route::redirect('/', '/dashboard');
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
+
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/read-all', [NotificationController::class, 'readAll'])->name('notifications.read-all');
+    Route::get('/notifications/{id}', [NotificationController::class, 'open'])->name('notifications.open');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');

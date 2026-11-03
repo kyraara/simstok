@@ -49,8 +49,11 @@ class StockService
                 );
             }
 
+            $before = $stock->quantity;
             $stock->quantity += $qty;
             $stock->save();
+
+            $this->warnIfCrossedMinimum($cylinderTypeId, $condition, $before, $stock->quantity);
 
             return StockMovement::create([
                 'cylinder_type_id' => $cylinderTypeId,
@@ -133,6 +136,20 @@ class StockService
 
         if ($qty > $available) {
             throw new InsufficientStockException(CylinderType::findOrFail($cylinderTypeId), $condition, $available, $qty);
+        }
+    }
+
+    /** Notifikasi hanya saat stok isi baru turun melewati batas minimum, agar tidak berulang. */
+    private function warnIfCrossedMinimum(int $cylinderTypeId, StockCondition $condition, int $before, int $after): void
+    {
+        if ($condition !== StockCondition::Isi || $after >= $before) {
+            return;
+        }
+
+        $type = CylinderType::find($cylinderTypeId);
+
+        if ($type && $type->min_stock > 0 && $before >= $type->min_stock && $after < $type->min_stock) {
+            app(NotificationService::class)->lowStock($type, $after);
         }
     }
 

@@ -164,6 +164,56 @@ Alpine.data('adjustmentForm', ({ type, rows, stocks }) => ({
     fmt,
 }));
 
+/**
+ * Lonceng notifikasi: data awal dari server, diperbarui tiap 30 detik dan saat tab kembali aktif.
+ * Klik notifikasi membuka /notifications/{id} yang menandai dibaca lalu mengarahkan ke dokumennya.
+ */
+Alpine.data('notificationBell', ({ feed, url, readAllUrl }) => ({
+    open: false,
+    unread: feed.unread,
+    items: feed.items,
+    timer: null,
+
+    init() {
+        this.timer = setInterval(() => this.refresh(), 30000);
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') this.refresh();
+        });
+    },
+
+    destroy() {
+        clearInterval(this.timer);
+    },
+
+    toggle() {
+        this.open = !this.open;
+        if (this.open) this.refresh();
+    },
+
+    apply(data) {
+        this.unread = data.unread;
+        this.items = data.items;
+    },
+
+    async refresh() {
+        try {
+            const res = await fetch(url, { headers: { Accept: 'application/json' } });
+            if (res.ok) this.apply(await res.json());
+        } catch {
+            // Jaringan putus: biarkan data lama tampil.
+        }
+    },
+
+    async readAll() {
+        const token = document.querySelector('meta[name="csrf-token"]')?.content;
+        const res = await fetch(readAllUrl, {
+            method: 'POST',
+            headers: { Accept: 'application/json', 'X-CSRF-TOKEN': token },
+        });
+        if (res.ok) this.apply(await res.json());
+    },
+}));
+
 /** Grafik batang distribusi 30 hari; Chart.js dimuat hanya di halaman yang membutuhkannya. */
 Alpine.data('distributionChart', ({ labels, datasets }) => ({
     async init() {

@@ -56,7 +56,7 @@ Setelah instalasi, semua stok bernilai 0. Isi saldo awal dengan salah satu cara 
 php artisan test
 ```
 
-Ada 70 tes (SQLite in-memory) yang mencakup 9 skenario black box di DESIGN.md §8, kriteria penerimaan PRD §10, hak akses, dan smoke test semua halaman/PDF/Excel.
+Ada 78 tes (SQLite in-memory) yang mencakup 9 skenario black box di DESIGN.md §8, kriteria penerimaan PRD §10, hak akses, dan smoke test semua halaman/PDF/Excel.
 
 ## Arsitektur singkat
 
@@ -80,4 +80,5 @@ Route → Middleware (auth, active, permission) → Controller → FormRequest
 | Pembatalan | Transaksi tidak dihapus. Status jadi *batal* + alasan + siapa/kapan, dan stok dibalik lewat mutasi bertipe `pembatalan`. Pembatalan ditolak bila stok sudah terpakai (mis. tabung isi dari penerimaan sudah didistribusikan). |
 | Kuota pangkalan | Hanya peringatan, tidak memblokir distribusi. |
 | Master data | Data yang sudah dipakai transaksi tidak bisa dihapus, cukup dinonaktifkan. Pengguna tidak dihapus, hanya dinonaktifkan. |
+| Notifikasi | Lonceng di top bar (diperbarui tiap 30 detik): pengajuan penyesuaian/opname ke penyetuju, hasil persetujuan ke pengaju, dan peringatan saat stok isi turun melewati minimum. Notifikasi tugas otomatis selesai setelah dokumennya diproses. |
 | Login | Dengan username atau email, dibatasi 5 percobaan/menit. Akun nonaktif tidak bisa login dan sesinya langsung diputus. |

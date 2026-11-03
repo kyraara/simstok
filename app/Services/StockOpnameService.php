@@ -27,6 +27,7 @@ class StockOpnameService
         private StockService $stock,
         private DocumentNumberService $numbers,
         private AdjustmentService $adjustments,
+        private NotificationService $notifications,
     ) {}
 
     public function openSession(): ?StockOpname
@@ -102,6 +103,10 @@ class StockOpnameService
                 $opname->submitted_at = now();
             }
             $opname->save();
+
+            if ($submit) {
+                $this->notifications->opnameSubmitted($opname);
+            }
         });
     }
 
@@ -148,6 +153,8 @@ class StockOpnameService
                 'review_note' => $note,
             ]);
 
+            $this->notifications->opnameReviewed($opname, approved: true);
+
             return $adjustment;
         });
     }
@@ -164,6 +171,8 @@ class StockOpnameService
             'approved_at' => now(),
             'review_note' => $note,
         ]);
+
+        $this->notifications->opnameReviewed($opname, approved: false);
     }
 
     public function delete(StockOpname $opname): void

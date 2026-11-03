@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Services\AdjustmentService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Notifications\DatabaseNotification;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -47,6 +48,9 @@ abstract class TestCase extends BaseTestCase
         }
 
         $service->approve($service->create(['date' => now()->toDateString(), 'type' => 'koreksi', 'reason' => 'Saldo awal pengujian'], $rows)->load('items'));
+
+        // Notifikasi dari saldo awal tidak relevan untuk skenario uji.
+        DatabaseNotification::query()->delete();
     }
 
     protected function outlet(): Outlet
