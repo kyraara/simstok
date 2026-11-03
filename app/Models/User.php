@@ -2,20 +2,26 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['name', 'username', 'email', 'password', 'is_active'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, HasRoles, Notifiable;
+
+    public const ROLES = [
+        'admin' => 'Admin',
+        'gudang' => 'Petugas Gudang',
+        'pimpinan' => 'Pimpinan',
+    ];
 
     /**
      * Get the attributes that should be cast.
@@ -27,6 +33,26 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
         ];
+    }
+
+    public function roleName(): ?string
+    {
+        return $this->getRoleNames()->first();
+    }
+
+    public function roleLabel(): string
+    {
+        return self::ROLES[$this->roleName()] ?? '-';
+    }
+
+    public function initials(): string
+    {
+        return collect(explode(' ', $this->name))
+            ->filter()
+            ->take(2)
+            ->map(fn ($part) => mb_strtoupper(mb_substr($part, 0, 1)))
+            ->implode('');
     }
 }
