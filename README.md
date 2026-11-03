@@ -2,8 +2,6 @@
 
 Sistem Informasi Manajemen Stok Tabung Gas LPG untuk **PT Kalindo Goa Utama Gas**, proyek Kerja Praktik Teknik Informatika UIGM.
 
-Dokumen acuan: [docs/PRD.md](docs/PRD.md) (kebutuhan) dan [docs/DESIGN.md](docs/DESIGN.md) (rancangan). Hasil pengujian ada di [docs/PENGUJIAN.md](docs/PENGUJIAN.md).
-
 ## Teknologi
 
 Laravel 13 (PHP 8.3), MySQL 8, Blade + Tailwind CSS 4 + Alpine.js, Chart.js, spatie/laravel-permission, barryvdh/laravel-dompdf, maatwebsite/excel.
