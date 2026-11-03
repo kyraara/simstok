@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Enums\ApprovalStatus;
+use App\Enums\OpnameStatus;
 use App\Models\Adjustment;
 use App\Models\CylinderType;
 use App\Models\Distribution;
@@ -12,6 +14,7 @@ use App\Services\StockService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -42,6 +45,19 @@ class AppServiceProvider extends ServiceProvider
 
         // Jenis tabung baru otomatis punya saldo isi/kosong/rusak = 0.
         CylinderType::created(fn (CylinderType $type) => app(StockService::class)->ensureStockRows($type));
+
+        // Jumlah dokumen yang menunggu persetujuan untuk lonceng di top bar.
+        View::composer('components.layouts.app', function ($view) {
+            $user = auth()->user();
+            $count = 0;
+            if ($user?->can('adjustments.approve')) {
+                $count += Adjustment::where('status', ApprovalStatus::Pending)->count();
+            }
+            if ($user?->can('opname.approve')) {
+                $count += StockOpname::where('status', OpnameStatus::Submitted)->count();
+            }
+            $view->with('pendingApprovals', $count);
+        });
 
         // Format angka Indonesia: 1.240
         Blade::directive('num', fn ($expression) => "<?php echo number_format((float) ($expression), 0, ',', '.'); ?>");

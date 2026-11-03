@@ -43,6 +43,14 @@ class CylinderType extends Model
         return (int) $this->stocks->firstWhere('condition', StockCondition::from($condition))?->quantity;
     }
 
+    /** "3 kg", "5,5 kg" */
+    public function weightLabel(): string
+    {
+        $weight = (float) $this->weight_kg;
+
+        return number_format($weight, floor($weight) == $weight ? 0 : 1, ',', '.').' kg';
+    }
+
     public function isBelowMinimum(): bool
     {
         return $this->min_stock > 0 && $this->stockOf(StockCondition::Isi) < $this->min_stock;

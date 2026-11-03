@@ -9,7 +9,12 @@ export default defineConfig({
             input: ['resources/css/app.css', 'resources/js/app.js'],
             refresh: true,
             fonts: [
-                bunny('Instrument Sans', {
+                bunny('Plus Jakarta Sans', {
+                    alias: 'jakarta',
+                    weights: [400, 500, 600, 700],
+                }),
+                bunny('JetBrains Mono', {
+                    alias: 'jetbrains',
                     weights: [400, 500, 600],
                 }),
             ],

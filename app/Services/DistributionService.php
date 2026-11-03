@@ -5,10 +5,10 @@ namespace App\Services;
 use App\Enums\MovementType;
 use App\Enums\StockCondition;
 use App\Enums\TransactionStatus;
+use App\Exceptions\BusinessRuleException;
 use App\Models\Distribution;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
-use App\Exceptions\BusinessRuleException;
 
 /** Distribusi ke pangkalan: tabung isi keluar (−), tabung kosong kembali (+). */
 class DistributionService

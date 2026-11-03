@@ -6,10 +6,10 @@ use App\Enums\AdjustmentType;
 use App\Enums\ApprovalStatus;
 use App\Enums\MovementType;
 use App\Enums\StockCondition;
+use App\Exceptions\BusinessRuleException;
 use App\Models\Adjustment;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
-use App\Exceptions\BusinessRuleException;
 
 /**
  * Penyesuaian stok. Dibuat petugas dengan status "pending";
