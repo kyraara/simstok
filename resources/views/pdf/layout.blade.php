@@ -11,7 +11,7 @@
         .kop td { vertical-align: middle; }
         .brand { font-size: 15px; font-weight: bold; letter-spacing: .2px; }
         .muted { color: #5b6474; }
-        .logo { width: 34px; height: 34px; background: #2e7d4f; border-radius: 6px; text-align: center; color: #fff; font-weight: bold; font-size: 12px; line-height: 34px; }
+        .logo { width: 34px; height: 34px; padding-top: 11px; background: #2e7d4f; border-radius: 6px; text-align: center; color: #fff; font-weight: bold; font-size: 11px; line-height: 1; }
         h1 { font-size: 14px; margin: 0 0 2px; text-transform: uppercase; letter-spacing: .5px; }
         table { width: 100%; border-collapse: collapse; }
         .grid th, .grid td { border: 1px solid #c9c4b8; padding: 5px 6px; }

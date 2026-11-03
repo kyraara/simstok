@@ -16,7 +16,7 @@
         <div x-data x-init="window.open(@js(route('distributions.print', $distribution)), '_blank')"
             class="mb-6 flex flex-col gap-3 rounded-card border border-gas/30 bg-gas/5 px-4 py-3 sm:flex-row sm:items-center">
             <x-icon name="printer" class="size-5 shrink-0 text-gas" />
-            <div class="flex-1 text-sm">Surat jalan dibuka di tab baru. Bila tidak muncul (diblokir browser), klik tombol di samping.</div>
+            <div class="flex-1 text-sm">Surat jalan dibuka di tab baru. Bila tidak muncul karena diblokir browser, klik <b>Buka Surat Jalan</b>.</div>
             <a href="{{ route('distributions.print', $distribution) }}" target="_blank" class="btn btn-primary btn-sm">Buka Surat Jalan</a>
         </div>
     @endif

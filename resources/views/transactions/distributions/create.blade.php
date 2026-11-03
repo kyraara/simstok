@@ -46,69 +46,64 @@
                 </div>
                 @error('items')<p class="text-sm font-medium text-flame">{{ $message }}</p>@enderror
             </div>
-            <div class="overflow-x-auto">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Jenis</th>
-                            <th class="text-right">Stok isi</th>
-                            <th class="w-36 text-right">Isi dikirim</th>
-                            <th class="w-36 text-right">Kosong diterima</th>
-                            <th class="text-right">Sisa kuota bulan ini</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <template x-for="(row, i) in rows" :key="row.cylinder_type_id">
-                            <tr>
-                                <td class="font-medium">
-                                    <span x-text="row.name"></span>
-                                    <input type="hidden" :name="`items[${i}][cylinder_type_id]`" :value="row.cylinder_type_id">
-                                </td>
-                                <td class="num text-right font-semibold" :class="row.stock_full > 0 ? 'text-gas' : 'text-flame'" x-text="fmt(row.stock_full)"></td>
-                                <td>
-                                    <input type="number" min="0" inputmode="numeric" :name="`items[${i}][qty_full_out]`" x-model="row.qty_full_out" @input="onFullInput(row)"
-                                        class="input num text-right" :class="exceeds(row) && 'input-error'" placeholder="0">
-                                    <p x-show="exceeds(row)" x-cloak class="mt-1 text-right text-xs font-medium text-flame">Stok tidak cukup</p>
-                                </td>
-                                <td>
-                                    <div class="relative">
-                                        <input type="number" min="0" inputmode="numeric" :name="`items[${i}][qty_empty_in]`" x-model="row.qty_empty_in" @input="onEmptyInput(row)"
-                                            class="input num pl-8 text-right" placeholder="0">
-                                        <button type="button" @click="row.linked = !row.linked; onFullInput(row)" tabindex="-1"
-                                            class="absolute inset-y-0 left-0 flex items-center px-2" :class="row.linked ? 'text-gas' : 'text-steel/60'"
-                                            :title="row.linked ? 'Tukar 1:1 aktif' : 'Klik untuk samakan dengan isi dikirim'">
-                                            <x-icon name="link" class="size-3.5" x-show="row.linked" />
-                                            <x-icon name="unlink" class="size-3.5" x-show="!row.linked" />
-                                        </button>
-                                    </div>
-                                </td>
-                                <td class="num text-right text-sm whitespace-nowrap">
-                                    <template x-if="quotaFor(row)">
-                                        <span :class="quotaRemaining(row) < 0 ? 'font-semibold text-flame' : 'text-muted'">
-                                            <span x-text="fmt(quotaRemaining(row))"></span> / <span x-text="fmt(quotaFor(row).quota)"></span>
-                                        </span>
-                                    </template>
-                                    <template x-if="!quotaFor(row)"><span class="text-steel">—</span></template>
-                                </td>
-                            </tr>
-                        </template>
-                        @foreach ($rows as $i => $row)
-                            @foreach (['qty_full_out', 'qty_empty_in'] as $f)
-                                @error("items.$i.$f")
-                                    <tr><td colspan="5" class="bg-flame/5 text-sm font-medium text-flame">{{ $message }}</td></tr>
-                                @enderror
-                            @endforeach
-                        @endforeach
-                    </tbody>
-                    <tfoot>
-                        <tr class="bg-paper/60 font-semibold">
-                            <td class="px-4 py-3" colspan="2">Total</td>
-                            <td class="num px-4 py-3 text-right" x-text="fmt(totalFull)"></td>
-                            <td class="num px-4 py-3 text-right" x-text="fmt(totalEmpty)"></td>
-                            <td></td>
-                        </tr>
-                    </tfoot>
-                </table>
+            {{-- Baris item: tabel di layar lebar, kartu di HP --}}
+            <div class="hidden grid-cols-[1fr_110px_150px_150px_150px] gap-4 border-b border-line bg-paper/60 px-6 py-2.5 text-xs font-semibold tracking-wide text-muted uppercase md:grid">
+                <div>Jenis</div><div class="text-right">Stok isi</div><div class="text-right">Isi dikirim</div><div class="text-right">Kosong diterima</div><div class="text-right">Sisa kuota bulan ini</div>
+            </div>
+            <div class="divide-y divide-line">
+                <template x-for="(row, i) in rows" :key="row.cylinder_type_id">
+                    <div class="grid grid-cols-2 items-start gap-x-3 gap-y-2 px-4 py-4 md:grid-cols-[1fr_110px_150px_150px_150px] md:gap-4 md:px-6 md:py-3">
+                        <div class="font-semibold md:self-center md:font-medium">
+                            <span x-text="row.name"></span>
+                            <input type="hidden" :name="`items[${i}][cylinder_type_id]`" :value="row.cylinder_type_id">
+                        </div>
+                        <div class="text-right md:self-center">
+                            <span class="text-xs text-muted md:hidden">Stok isi </span>
+                            <span class="num font-semibold" :class="row.stock_full > 0 ? 'text-gas' : 'text-flame'" x-text="fmt(row.stock_full)"></span>
+                        </div>
+                        <div>
+                            <label class="mb-1 block text-xs text-muted md:hidden" :for="`full-${i}`">Isi dikirim</label>
+                            <input type="number" min="0" inputmode="numeric" :id="`full-${i}`" :name="`items[${i}][qty_full_out]`" x-model="row.qty_full_out" @input="onFullInput(row)"
+                                class="input num text-right" :class="exceeds(row) && 'input-error'" placeholder="0">
+                            <p x-show="exceeds(row)" x-cloak class="mt-1 text-right text-xs font-medium text-flame">Stok tidak cukup</p>
+                        </div>
+                        <div>
+                            <label class="mb-1 block text-xs text-muted md:hidden" :for="`empty-${i}`">Kosong diterima</label>
+                            <div class="relative">
+                                <input type="number" min="0" inputmode="numeric" :id="`empty-${i}`" :name="`items[${i}][qty_empty_in]`" x-model="row.qty_empty_in" @input="onEmptyInput(row)"
+                                    class="input num pl-8 text-right" placeholder="0">
+                                <button type="button" @click="row.linked = !row.linked; onFullInput(row)" tabindex="-1"
+                                    class="absolute inset-y-0 left-0 flex items-center px-2" :class="row.linked ? 'text-gas' : 'text-steel/60'"
+                                    :title="row.linked ? 'Tukar 1:1 aktif' : 'Klik untuk samakan dengan isi dikirim'">
+                                    <x-icon name="link" class="size-3.5" x-show="row.linked" />
+                                    <x-icon name="unlink" class="size-3.5" x-show="!row.linked" />
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-span-2 text-right text-sm md:col-span-1 md:self-center">
+                            <span class="text-xs text-muted md:hidden">Sisa kuota bulan ini: </span>
+                            <template x-if="quotaFor(row)">
+                                <span class="num" :class="quotaRemaining(row) < 0 ? 'font-semibold text-flame' : 'text-muted'">
+                                    <span x-text="fmt(quotaRemaining(row))"></span> / <span x-text="fmt(quotaFor(row).quota)"></span>
+                                </span>
+                            </template>
+                            <template x-if="!quotaFor(row)"><span class="text-steel">—</span></template>
+                        </div>
+                    </div>
+                </template>
+            </div>
+            @foreach ($rows as $i => $row)
+                @foreach (['qty_full_out', 'qty_empty_in'] as $f)
+                    @error("items.$i.$f")
+                        <p class="border-t border-line bg-flame/5 px-6 py-2 text-sm font-medium text-flame">{{ $message }}</p>
+                    @enderror
+                @endforeach
+            @endforeach
+            <div class="flex justify-between gap-4 border-t border-line bg-paper/60 px-4 py-3 text-sm font-semibold md:grid md:grid-cols-[1fr_110px_150px_150px_150px] md:px-6">
+                <div class="md:col-span-2">Total</div>
+                <div class="num text-right"><span class="font-normal text-muted md:hidden">isi </span><span x-text="fmt(totalFull)"></span></div>
+                <div class="num text-right"><span class="font-normal text-muted md:hidden">kosong </span><span x-text="fmt(totalEmpty)"></span></div>
+                <div class="hidden md:block"></div>
             </div>
             <div x-show="rows.some(r => quotaRemaining(r) !== null && quotaRemaining(r) < 0)" x-cloak
                 class="flex items-center gap-2 border-t border-amber/40 bg-amber/10 px-6 py-3 text-sm text-[#8a5413]">
